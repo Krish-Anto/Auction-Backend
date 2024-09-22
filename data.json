@@ -1,0 +1,74 @@
+[
+    {
+        "name": "Orange",
+        "category": "fruits",
+        "price": 25,
+        "image": "https://m.media-amazon.com/images/I/31vcKZnUpzL._AC_UL480_FMwebp_QL65_.jpg"
+    },
+    {
+        "name": "Apple",
+        "category": "fruits",
+        "price": 15,
+        "image": "https://m.media-amazon.com/images/I/51LnzMewgsL._SY300_SX300_QL70_FMwebp_.jpg"
+    },
+    {
+        "name": "Grapes",
+        "category": "fruits",
+        "price": 30,
+        "image": "https://i.pinimg.com/564x/f4/64/eb/f464eb3327d44ed66e587a726098c3fe.jpg"
+    },
+    {
+        "name": "Strawberry",
+        "category": "fruits",
+        "price": 35,
+        "image": "https://i.pinimg.com/564x/32/aa/38/32aa382e76d0a59986af1ec80fcfeede.jpg"
+    },
+    {
+        "name": "Pineapple",
+        "category": "fruits",
+        "price": 40,
+        "image": "https://i.pinimg.com/564x/2c/63/b7/2c63b7da12c461e62abad5e6473c08bf.jpg"
+    },
+    {
+        "name": "Blackberry",
+        "category": "fruits",
+        "price": 30,
+        "image": "https://i.pinimg.com/564x/37/b0/7c/37b07c7012cedfbd78ac0fa1ad297466.jpg"
+    },
+    {
+        "name": "Avocado",
+        "category": "fruits",
+        "price": 60,
+        "image": "https://i.pinimg.com/564x/e7/f1/0d/e7f10d9c8134d7626c404a089eb278f6.jpg"
+    },
+    {
+        "name": "Cauliflower",
+        "category": "vegetables",
+        "price": 10,
+        "image": "https://i.pinimg.com/564x/f9/a3/a1/f9a3a14f1d0c1ca829f0604c07181e0e.jpg"
+    },
+    {
+        "name": "Tomatoes",
+        "category": "vegetables",
+        "price": 30,
+        "image": "https://i.pinimg.com/564x/c2/da/d0/c2dad0767e554eb74dc1d7b59b79581f.jpg"
+    },
+    {
+        "name": "Pepper",
+        "category": "vegetables",
+        "price": 30,
+        "image": "https://i.pinimg.com/564x/70/55/a0/7055a0d9d0c09cb75b1eb76a4de3380d.jpg"
+    },
+    {
+        "name": "Onion",
+        "category": "vegetables",
+        "price": 15,
+        "image": "https://i.pinimg.com/564x/c7/22/01/c72201b4b1c922237730f2c7bc15f65f.jpg"
+    },
+    {
+        "name": "Potato",
+        "category": "vegetables",
+        "price": 15,
+        "image": "https://i.pinimg.com/564x/1f/98/b4/1f98b4ff5060a93b3b2aacd71036c0c6.jpg"
+    }
+]
