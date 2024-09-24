@@ -1,6 +1,7 @@
 const express = require('express')
 const dotenv = require('dotenv')
 dotenv.config()
+const cors = require("cors")
 const  mongoose =  require('mongoose')
 const  userRouter = require('./Router/userRoute.js')
 const itemRouter  = require( './Router/itemRoute.js')
@@ -10,6 +11,7 @@ const app = express()
 const Mongo_URL = process.env.Mongo_URL
 const PORT = process.env.PORT
 app.use(express.json())
+app.use(cors())
 
 app.get("/",(req,res)=>{
   res.send("Welcome to our Pet Shop")

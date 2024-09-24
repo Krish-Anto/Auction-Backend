@@ -29,17 +29,15 @@ router.post("/delete-items",async(req,res)=>{
     try{
         const item = await itemModel.findOneAndDelete({_id : req.body.id})
         item?res.send("Item deleted successfully") : res.send("item not found")
-
     }
     catch(error){
         res.status(400).send(error)
     }
 })
 
-
 router.post("/edit-items",async(req,res)=>{
     try{
-        await itemModel.findOneAndUpdate({_id:req.body._id},req.body)
+        await itemModel.findOneAndUpdate({_id:req.body.id},req.body)
         res.send("item updated success")
     }
     catch(error){
