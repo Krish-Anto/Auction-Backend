@@ -5,9 +5,10 @@ const userSchema = mongoose.Schema(
     {
         name :{type : String,required : true},
         userId:{type : String, required : true},
+        email:{type : String, unique : true},
         password : {type : String, required : true},
-        verified : {type : String, required : true},
-        roles : {type : String,required : true,default:"user",enum:["admin","user"]}
+        role : {type : String,required : true,default :"adopter",enum:["admin","adopter","owner"]},
+        appliedPets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Adoption' }]
     },
     {timestamps : true}
 )

@@ -3,13 +3,10 @@ const mongoose = require('mongoose')
 
 const billSchema = mongoose.Schema(
     {
-        Customername :{type : String,required : true},
-        MobileNumber :{type:Number,required : true},
-        tax:{type : Number, required : true},
-        TotalAmount : {type : Number, required : true},
-        SubTotal : {type : String, required : true},
-        PaymentMode : {type : String, required : true},
-        cartItems : {type : Array,required : true}
+        pet: { type: mongoose.Schema.Types.ObjectId, ref: 'Pet' },
+        adopter: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+        feedback: String,
     },
     {timestamps : true}
 )

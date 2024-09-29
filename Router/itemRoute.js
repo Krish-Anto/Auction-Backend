@@ -1,23 +1,55 @@
 const express = require('express')
 const router = express.Router()
-const itemModel = require('../model/petModel')
+const petModel = require('../model/petModel')
+const multer = require('multer')
 
 
-router.post("/add-items", async(req,res)=>{
-try{
-    const insertItems = Array.isArray(req.body)? req.body : [req.body]
-    const newItem = await itemModel.insertMany(insertItems)
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); // Directory for uploaded files
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname); // Unique file name
+    }
+});
+const upload = multer({ storage: storage });
+
+// router.post("/add-pets", async(req,res)=>{
+// try{
+//     const insertItems = Array.isArray(req.body)? req.body : [req.body]
+//     const newItem = await petModel.insertMany(insertItems)
     
-     res.status(201).json({message : "Items added successfully",newItem})
-}
-catch(error){
-    res.status(400).json(error)
-}
-})
+//      res.status(201).json({message : "Items added successfully",newItem})
+// }
+// catch(error){
+//     res.status(400).json(error)
+// }
+// })
 
-router.get("/get-items",async(req,res)=>{
+router.post('/create-pets', auth, upload.array('photos', 5), async (req, res) => {
+    const { name, breed, details } = req.body;
+
+    try {
+        const decoded = jwt.verify(req.header('x-auth-token'), process.env.SECRET_KEY);
+        const newPet = new petModel({
+            name,
+            breed,
+            details,
+            owner: decoded.id, // Set the owner to the logged-in user
+            image: req.files.map(file => file.path), // Save file paths
+        });
+
+        await newPet.save();
+        res.status(201).json({ message: 'Pet added successfully' });
+    } catch (error) {
+        console.error('Error adding pet:', error);
+        res.status(500).json({ message: 'Failed to add pet', error: error.message });
+    }
+});
+
+router.get("/get-pets",async(req,res)=>{
     try{
-        const items = await itemModel.find()
+        const items = await petModel.find()
         res.status(201).json(items)
     }
     catch(error){
@@ -25,9 +57,9 @@ router.get("/get-items",async(req,res)=>{
     }
 })
 
-router.post("/delete-items",async(req,res)=>{
+router.post("/delete-pets",async(req,res)=>{
     try{
-        const item = await itemModel.findOneAndDelete({_id : req.body.id})
+        const item = await petModel.findOneAndDelete({_id : req.body.id})
         item?res.send("Item deleted successfully") : res.send("item not found")
     }
     catch(error){
@@ -35,9 +67,9 @@ router.post("/delete-items",async(req,res)=>{
     }
 })
 
-router.post("/edit-items",async(req,res)=>{
+router.post("/edit-pets",async(req,res)=>{
     try{
-        await itemModel.findOneAndUpdate({_id:req.body.id},req.body)
+        await petModel.findOneAndUpdate({_id:req.body.id},req.body)
         res.send("item updated success")
     }
     catch(error){

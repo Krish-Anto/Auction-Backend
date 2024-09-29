@@ -4,7 +4,7 @@ dotenv.config()
 const cors = require("cors")
 const  mongoose =  require('mongoose')
 const  userRouter = require('./Router/userRoute.js')
-const itemRouter  = require( './Router/itemRoute.js')
+const petRouter  = require( './Router/itemRoute.js')
 const billRouter = require('./Router/billRoute.js')
 
 const app = express()
@@ -17,6 +17,21 @@ app.get("/",(req,res)=>{
   res.send("Welcome to our Pet Shop")
 })
 
+// async function createConnection(){
+//   const client = new MongoClient(Mongo_URL)
+//  try{
+//   await client.connect()
+//   console.log("Mongo Connection Started")
+//   return client
+//  }
+//  catch(error){
+//     console.error("Failed to connect to MongoDB", err);
+//         throw err;
+//  }
+// }
+
+// const client = await createConnection()
+
 mongoose.connect(Mongo_URL)
 .then(()=>{
     console.log("Mongodb Connected")
@@ -26,6 +41,13 @@ mongoose.connect(Mongo_URL)
     console.log("Error",error)
 })
 
+// app.listen(process.env.port,()=>{
+//   console.log(`App is running in https://localhost/${process.env.port}`)
+// }
+// )
+
 app.use("/users",userRouter)
-app.use("/items",itemRouter)
+app.use("/pets",petRouter)
 app.use("/bills",billRouter)
+
+
