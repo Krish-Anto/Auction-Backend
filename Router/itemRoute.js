@@ -1,18 +1,20 @@
 const express = require('express')
 const router = express.Router()
 const petModel = require('../model/petModel')
-const multer = require('multer')
+// const multer = require('multer')
+const auth = require('../Middleware/Auth')
+const authorizeRoles = require('../Middleware/Authorize')
 
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/'); // Directory for uploaded files
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname); // Unique file name
-    }
-});
-const upload = multer({ storage: storage });
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, 'uploads/'); // Directory for uploaded files
+//     },
+//     filename: (req, file, cb) => {
+//         cb(null, Date.now() + '-' + file.originalname); // Unique file name
+//     }
+// });
+// const upload = multer({ storage: storage });
 
 // router.post("/add-pets", async(req,res)=>{
 // try{
@@ -26,19 +28,11 @@ const upload = multer({ storage: storage });
 // }
 // })
 
-router.post('/create-pets', auth, upload.array('photos', 5), async (req, res) => {
-    const { name, breed, details } = req.body;
+router.post('/create-pets',auth,authorizeRoles('owner','admin'), async (req, res) => {
+    // const { name, breed, gender,details,image } = req.body;
 
     try {
-        const decoded = jwt.verify(req.header('x-auth-token'), process.env.SECRET_KEY);
-        const newPet = new petModel({
-            name,
-            breed,
-            details,
-            owner: decoded.id, // Set the owner to the logged-in user
-            image: req.files.map(file => file.path), // Save file paths
-        });
-
+        const newPet = new petModel({...req.body,verified : true});
         await newPet.save();
         res.status(201).json({ message: 'Pet added successfully' });
     } catch (error) {
@@ -47,7 +41,7 @@ router.post('/create-pets', auth, upload.array('photos', 5), async (req, res) =>
     }
 });
 
-router.get("/get-pets",async(req,res)=>{
+router.get("/get-pets",auth,authorizeRoles('owner','admin','adopter'),async(req,res)=>{
     try{
         const items = await petModel.find()
         res.status(201).json(items)
@@ -57,23 +51,24 @@ router.get("/get-pets",async(req,res)=>{
     }
 })
 
-router.post("/delete-pets",async(req,res)=>{
+router.post("/delete-pets/:id",async(req,res)=>{
     try{
         const item = await petModel.findOneAndDelete({_id : req.body.id})
-        item?res.send("Item deleted successfully") : res.send("item not found")
+        item?res.send("pet deleted successfully") : res.send("pet not found")
     }
     catch(error){
         res.status(400).send(error)
     }
 })
 
-router.post("/edit-pets",async(req,res)=>{
+router.put("/edit-pets",async(req,res)=>{
     try{
-        await petModel.findOneAndUpdate({_id:req.body.id},req.body)
-        res.send("item updated success")
+        const { _id,...updatedData } = req.body;
+        await petModel.findOneAndUpdate({_id:_id},{ $set: updatedData })
+        res.status(201).send("updated success")
     }
     catch(error){
-        res.status(400).send("items not found")
+        res.status(500).send({ message : "pet not Found",error : error.message} )
     }
 })
 

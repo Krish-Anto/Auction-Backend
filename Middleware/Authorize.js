@@ -1,10 +1,17 @@
-const authorize = (roles = []) => {
+const authorizeRoles = (...allowedRoles) => {
     return (req, res, next) => {
-        if (!roles.includes(req.user.role)) {
+        try{
+            const {role} = req.user
+        if (!allowedRoles.includes(role)) {
             return res.status(403).send({ message: "Access denied. You do not have permission." });
         }
         next();
+        }
+        catch(error){
+            console.error('Authorization error:', error);
+      return res.status(500).json({ message: 'Authorization failed' });
+        }
     };
 };
 
-module.exports = authorize;
+module.exports = authorizeRoles;
