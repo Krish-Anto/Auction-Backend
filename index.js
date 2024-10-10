@@ -2,16 +2,29 @@ const express = require('express')
 const dotenv = require('dotenv')
 dotenv.config()
 const cors = require("cors")
+const multer = require('multer')
 const  mongoose =  require('mongoose')
 const  userRouter = require('./Router/userRoute.js')
 const petRouter  = require( './Router/itemRoute.js')
-const billRouter = require('./Router/billRoute.js')
+const adoptRouter = require('./Router/AdoptRoute.js')
 
 const app = express()
 const Mongo_URL = process.env.Mongo_URL
 const PORT = process.env.PORT
 app.use(express.json())
 app.use(cors())
+
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Directory to store uploaded images
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname); // Naming the file
+  }
+});
+
+const upload = multer({ storage });
 
 app.get("/",(req,res)=>{
   res.send("Welcome to our Pet Shop")
@@ -48,6 +61,6 @@ mongoose.connect(Mongo_URL)
 
 app.use("/users",userRouter)
 app.use("/pets",petRouter)
-app.use("/bills",billRouter)
+app.use("/adoptForm",adoptRouter)
 
 

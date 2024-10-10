@@ -28,9 +28,9 @@ const authorizeRoles = require('../Middleware/Authorize')
 // }
 // })
 
-router.post('/create-pets',auth,authorizeRoles('owner','admin'), async (req, res) => {
+router.post('/addpets',auth,authorizeRoles('owner','admin'), async (req, res) => {
     // const { name, breed, gender,details,image } = req.body;
-
+    
     try {
         const newPet = new petModel({...req.body,verified : true});
         await newPet.save();
@@ -41,7 +41,8 @@ router.post('/create-pets',auth,authorizeRoles('owner','admin'), async (req, res
     }
 });
 
-router.get("/get-pets",auth,authorizeRoles('owner','admin','adopter'),async(req,res)=>{
+router.get("/get-pets/",auth,async(req,res)=>{
+    
     try{
         const items = await petModel.find()
         res.status(201).json(items)
@@ -51,7 +52,8 @@ router.get("/get-pets",auth,authorizeRoles('owner','admin','adopter'),async(req,
     }
 })
 
-router.post("/delete-pets/:id",async(req,res)=>{
+router.post("/delete-pets/:petId",async(req,res)=>{
+    const { petId } = req.params;
     try{
         const item = await petModel.findOneAndDelete({_id : req.body.id})
         item?res.send("pet deleted successfully") : res.send("pet not found")
@@ -61,7 +63,8 @@ router.post("/delete-pets/:id",async(req,res)=>{
     }
 })
 
-router.put("/edit-pets",async(req,res)=>{
+router.put("/edit-pets/:petId",async(req,res)=>{
+    const { petId } = req.params;
     try{
         const { _id,...updatedData } = req.body;
         await petModel.findOneAndUpdate({_id:_id},{ $set: updatedData })
