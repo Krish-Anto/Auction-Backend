@@ -32,7 +32,16 @@ router.post('/addpets',auth,authorizeRoles('owner','admin'), async (req, res) =>
     // const { name, breed, gender,details,image } = req.body;
     
     try {
-        const newPet = new petModel({...req.body,verified : true});
+        const ownerId = req.user.id; 
+        const { name, breed, gender,details, image } = req.body;
+        const newPet = new petModel({
+            name,
+            breed,
+            gender,
+            details,
+            image,
+            owner: ownerId,
+            verified : true});
         await newPet.save();
         res.status(201).json({ message: 'Pet added successfully' });
     } catch (error) {
@@ -41,7 +50,7 @@ router.post('/addpets',auth,authorizeRoles('owner','admin'), async (req, res) =>
     }
 });
 
-router.get("/get-pets/",auth,async(req,res)=>{
+router.get("/get-pets",auth,async(req,res)=>{
     
     try{
         const items = await petModel.find()
@@ -52,14 +61,22 @@ router.get("/get-pets/",auth,async(req,res)=>{
     }
 })
 
-router.post("/delete-pets/:petId",async(req,res)=>{
+router.post("/delete-pet/:petId",auth,authorizeRoles('owner','admin'),async(req,res)=>{
     const { petId } = req.params;
+    const userId = req.user.id;
     try{
-        const item = await petModel.findOneAndDelete({_id : req.body.id})
-        item?res.send("pet deleted successfully") : res.send("pet not found")
-    }
-    catch(error){
-        res.status(400).send(error)
+        const pet = await petModel.findById(petId)
+        if(!pet){
+            res.status(401).send({message : "pet not found"})
+        }
+        if (pet.owner.toString() !== userId) {
+            return res.status(403).send({ message: "You are not authorized to delete this pet." });
+        }
+
+        await petModel.findByIdAndDelete(petId);
+        res.status(200).send({ message: "Pet deleted successfully" });
+    } catch (error) {
+        res.status(400).send({ error: error.message });
     }
 })
 
