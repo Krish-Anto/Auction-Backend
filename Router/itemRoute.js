@@ -62,10 +62,10 @@ router.get("/get-pets",auth,async(req,res)=>{
 })
 
 router.post("/delete-pet/:petId",auth,authorizeRoles('owner','admin'),async(req,res)=>{
-    const { petId } = req.params;
+    const  petId  = req.params.id;
     const userId = req.user.id;
     try{
-        const pet = await petModel.findById(petId)
+        const pet = await petModel.findOne({_id:petId})
         if(!pet){
             res.status(401).send({message : "pet not found"})
         }
