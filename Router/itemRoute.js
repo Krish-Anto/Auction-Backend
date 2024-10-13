@@ -61,7 +61,7 @@ router.get("/get-pets",auth,async(req,res)=>{
     }
 })
 
-router.post("/delete-pet/:petId",auth,authorizeRoles('owner','admin'),async(req,res)=>{
+router.delete("/delete-pet/:petId",auth,authorizeRoles('owner','admin'),async(req,res)=>{
     const  petId  = req.params.id;
     const userId = req.user.id;
     try{
