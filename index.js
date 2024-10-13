@@ -12,7 +12,10 @@ const app = express()
 const Mongo_URL = process.env.Mongo_URL
 const PORT = process.env.PORT
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+  origin: 'http://localhost:5173', // your frontend origin
+  credentials: true // if you're using cookies or auth headers
+}))
 
 
 const storage = multer.diskStorage({
