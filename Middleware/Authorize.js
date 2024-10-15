@@ -3,7 +3,6 @@ const authorizeRoles = (...allowedRoles) => {
         try{
             const {role} = req.user
             console.log(req.user)
-            console.log(role)
         if (!allowedRoles.includes(role)) {
             return res.status(403).send({ message: "Access denied. You do not have permission." });
         }

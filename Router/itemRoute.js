@@ -62,17 +62,20 @@ router.get("/get-pets",auth,async(req,res)=>{
 })
 
 router.delete("/delete-pet/:petId",auth,authorizeRoles('owner','admin'),async(req,res)=>{
-    const  petId  = req.params.id;
+    
+    const  petId  = req.params.petId;
+    console.log(petId)
     const userId = req.user.id;
+    console.log(userId)
     try{
         const pet = await petModel.findOne({_id:petId})
         if(!pet){
-            res.status(401).send({message : "pet not found"})
+            return res.status(401).send({message : "pet not found"})
         }
+        console.log("owner",pet.owner);
         if (pet.owner.toString() !== userId) {
             return res.status(403).send({ message: "You are not authorized to delete this pet." });
         }
-
         await petModel.findByIdAndDelete(petId);
         res.status(200).send({ message: "Pet deleted successfully" });
     } catch (error) {
