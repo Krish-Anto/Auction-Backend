@@ -1,39 +1,45 @@
 const express = require('express')
 const router = express.Router()
 const petModel = require('../model/petModel')
-// const multer = require('multer')
+const multer = require('multer')
+const path = require('path')
 const auth = require('../Middleware/Auth')
 const authorizeRoles = require('../Middleware/Authorize')
 
+const storage = multer.diskStorage({
+    destination : './uploads',
+    filename:(req,file,cb) =>{
+     cb(null,Date.now()+path.extname(file.originalname));   
+    }
+})
 
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, 'uploads/'); // Directory for uploaded files
-//     },
-//     filename: (req, file, cb) => {
-//         cb(null, Date.now() + '-' + file.originalname); // Unique file name
-//     }
-// });
-// const upload = multer({ storage: storage });
+const upload = multer({
+    storage : storage,
+    limits : {fileSize : 3000000},
+    fileFilter : (req,file,cb)=>{
+        checkFileType(file,cb)
+    }
+}).single('image');
 
-// router.post("/add-pets", async(req,res)=>{
-// try{
-//     const insertItems = Array.isArray(req.body)? req.body : [req.body]
-//     const newItem = await petModel.insertMany(insertItems)
-    
-//      res.status(201).json({message : "Items added successfully",newItem})
-// }
-// catch(error){
-//     res.status(400).json(error)
-// }
-// })
+function checkFileType(file,cb){
+    const filetypes = /jpeg|jpg|png/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
 
-router.post('/addpets',auth,authorizeRoles('owner','admin'), async (req, res) => {
+    if(extname&&mimetype){
+        return cb(null,true);
+    }else{
+        cb('Error : Images only');
+    }
+}
+
+router.post('/addpets',auth,authorizeRoles('owner','admin'), upload, async (req, res) => {
     // const { name, breed, gender,details,image } = req.body;
     
     try {
         const ownerId = req.user.id; 
-        const { name, breed, gender,details, image } = req.body;
+        const { name, breed, gender,details } = req.body;
+        const image = req.file?req.file.path : '';
         const newPet = new petModel({
             name,
             breed,
@@ -83,19 +89,25 @@ router.delete("/delete-pet/:petId",auth,authorizeRoles('owner','admin'),async(re
     }
 })
 
-router.put("/edit-pets/:petId",async(req,res)=>{
-    const { petId } = req.params;
+router.put("/edit-pet/:petId",async(req,res)=>{
+    const { petId } = req.params.petId;
     try{
-        const { _id,...updatedData } = req.body;
-        await petModel.findOneAndUpdate({_id:_id},{ $set: updatedData })
+        
+        const { name , breed,gender,details } = req.body;
+        const image = req.file?req.file.path : req.body.image;
+        const updated =  await petModel.findByIdAndUpdate(req.params.petId,{name,breed,gender,details,image},{new : true})
         res.status(201).send("updated success")
+        if (!updated) {
+            return res.status(404).json({ success: false, message: 'Pet not found' });
+          }
+          res.json({ success: true, pet: updated });
     }
     catch(error){
-        res.status(500).send({ message : "pet not Found",error : error.message} )
+        res.status(500).json({ success: false, message: 'Failed to update pet', error });
     }
 })
 
-
+4
 // router.post('/update-item',async(req,res)=>{
 //     try{
 //         const {id , ...updateData} = req.body
