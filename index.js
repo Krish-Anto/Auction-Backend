@@ -7,27 +7,13 @@ const  mongoose =  require('mongoose')
 const  userRouter = require('./Router/userRoute.js')
 const petRouter  = require( './Router/itemRoute.js')
 const adoptRouter = require('./Router/AdoptRoute.js')
-
 const app = express()
 const Mongo_URL = process.env.Mongo_URL
 const PORT = process.env.PORT
 app.use(express.json())
-app.use(cors({
-  origin: 'http://localhost:5173', // your frontend origin
-  credentials: true // if you're using cookies or auth headers
-}))
+app.use(cors())
 
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Directory to store uploaded images
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname); // Naming the file
-  }
-});
-
-const upload = multer({ storage });
+app.options('*', cors());
 
 app.get("/",(req,res)=>{
   res.send("Welcome to our Pet Shop")
