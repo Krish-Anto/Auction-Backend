@@ -1,0 +1,1 @@
+Backend for Pet Adoptation using Nodejs and Express Server as well as Multer for File upload .Also used JWt for Login Authentication as well as role based Autrhentication . For Example : Only the Pet Owner can update the respective pets details and receive mails when Per Adopters want to meet the Pets on Individually .
